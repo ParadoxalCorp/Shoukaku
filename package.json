@@ -1,0 +1,28 @@
+{
+    "name": "felix-production-request-handler",
+    "version": "1.0.0-beta",
+    "main": "index.js",
+    "author": "ParadoxOrigins",
+    "contributors": [
+        {
+            "name": "Niputi"
+        },
+        {
+            "name": "Otaku17"
+        }
+    ],
+    "repository": "github:ParadoxalCorp/felix-production-request-handler",
+    "license": "GPL-3.0",
+    "scripts": {
+        "start": "node index.js",
+        "test": "mocha"
+    },
+    "dependencies": {
+        "axios": "^0.18.0",
+        "npm": "^6.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^10.0.0",
+        "eslint": "^5.0.0"
+    }
+}
