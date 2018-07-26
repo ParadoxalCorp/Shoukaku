@@ -1,6 +1,7 @@
 {
-    "name": "felix-production-request-handler",
+    "name": "shoukaku",
     "version": "1.0.0-beta",
+    "description": "A request handler server for Felix",
     "main": "index.js",
     "author": "ParadoxOrigins",
     "contributors": [
@@ -11,15 +12,15 @@
             "name": "Otaku17"
         }
     ],
-    "repository": "github:ParadoxalCorp/felix-production-request-handler",
+    "repository": "github:ParadoxalCorp/Shoukaku",
     "license": "GPL-3.0",
     "scripts": {
-        "start": "node index.js",
-        "test": "mocha"
+        "start": "node index.js"
     },
     "dependencies": {
         "axios": "^0.18.0",
-        "npm": "^6.0.0"
+        "npm": "^6.0.0",
+        "hapi": "^17.5.2"
     },
     "devDependencies": {
         "@types/node": "^10.0.0",
