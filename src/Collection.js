@@ -4,13 +4,13 @@
  * @extends {Map}
  */
 class Collection extends Map {
-    
-    
+
+
     /**
      * 
      * A Map with additional utility methods. This is used throughout discord.js rather than Arrays for anything that has
      * an ID, for significantly improved performance and ease-of-use.
-     * @param {Map<any, any>} iterable Map
+     * @param {Map<any, any>} [iterable] I'm empty on instantiation
      */
     constructor(iterable) {
         super(iterable);
@@ -412,7 +412,7 @@ class Collection extends Map {
      * @returns {boolean} The array
      */
     every(fn, thisArg) {
-        if (thisArg) { 
+        if (thisArg) {
             fn = fn.bind(thisArg);
         }
         for (const [key, val] of this) {
