@@ -6,7 +6,7 @@ fs.readFile(require.resolve('./testimage.jpg'), {encoding: 'base64'}, async(err,
     if (err) {
         return console.log(err);
     }
-    let formData = querystring.stringify({image: data}); 
+    let formData = querystring.stringify({image: `${data}`}); 
     const response = await axios.post('http://localhost:9850/request', {
         service: 'whatanime.ga',
         route: '/search',
