@@ -17,8 +17,11 @@ class Shoukaku {
             method: 'POST',
             path: '/request',
             config: {
-                handler: this.onRequest.bind(this)
-            }
+                handler: this.onRequest.bind(this),
+                payload: {
+                    maxBytes: 5242880
+                }
+            },
         });
         this.config = config;
         for (const service of config.services) {
@@ -63,17 +66,32 @@ class Shoukaku {
         requestHandler.queueRequest(request)
             .then(this.processResponse.bind(this, requestHandler, request))
             .catch(err => {
-                console.log(err);
-                //Identify error
-                //Retry logic
+                const error = this.identifyError(requestHandler, err);
+                const mention = (Date.now() - 7500) > request.processedAt ? `<@!${request.userID}> ` : '';
+                axios.post(`${this.config.discordBaseURL}/channels/${request.channelID}/messages`, { content: mention + error }, {
+                    headers: {
+                        'Authorization': `Bot ${this.config.token}`,
+                        'Content-Type': `application/json`
+                    },
+                });
             });
+    }
+
+    identifyError(requestHandler, err) {
+        if (err.response.status >= 500) {
+            return `:x: whatanime.ga's servers seems to be down at the moment, maybe try again later?`;
+        } else if (requestHandler.errorCodes[err.response.status]) {
+            return `:x: ${requestHandler.errorCodes[err.response.status]}`;
+        }
+        console.log(err);
+        return `:x: An error occurred`;
     }
 
     async processResponse(requestHandler, request, response) {
         switch (requestHandler.host) {
             case 'whatanime.ga':
-                let data = await this.formatWhatAnimeResponse(request, response);
-                axios.post(`${this.config.discordBaseURL}/channels/235118465071972352/messages`, data, {
+                let data = this.formatWhatAnimeResponse(request, response);
+                axios.post(`${this.config.discordBaseURL}/channels/${request.channelID}/messages`, data, {
                     headers: {
                         'Authorization': `Bot ${this.config.token}`,
                         'Content-Type': `application/json`
@@ -88,7 +106,7 @@ class Shoukaku {
         }
     }
 
-    async formatWhatAnimeResponse(request, response) {
+    formatWhatAnimeResponse(request, response) {
         const mention = (Date.now() - 7500) > request.processedAt ? `<@!${request.userID}> ` : '';
         if (!response.data.RawDocsCount) {
             return {

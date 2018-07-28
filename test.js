@@ -14,7 +14,9 @@ fs.readFile(require.resolve('./testimage.jpg'), {encoding: 'base64'}, async(err,
         headers: {
             'Content-Length': formData.length
         },
-        method: 'post'
+        method: 'post',
+        channelID: '235118465071972352',
+        userID: '140149699486154753'
     });
     console.log(response.data);
 });

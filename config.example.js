@@ -13,6 +13,9 @@ module.exports = {
         },
         defaultHeaders: {
             'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        errorCodes: {
+            413: 'Your image was over 1MB, and whatanime.ga can\'t process images over 1MB'
         }
     }]
 };
