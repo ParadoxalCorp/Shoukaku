@@ -1,7 +1,6 @@
 'use strict';
 
 const axios = require('axios');
-const { inspect } = require('util');
 const querystring = require('querystring');
 
 class RequestHandler {
