@@ -61,7 +61,7 @@ class Shoukaku {
             processedAt: Date.now()
         };
         requestHandler.queueRequest(request)
-            .then(res => console.log(res)/*this.processResponse.bind(this, requestHandler)*/)
+            .then(this.processResponse.bind(this, requestHandler, request))
             .catch(err => {
                 console.log(err);
                 //Identify error
@@ -69,17 +69,15 @@ class Shoukaku {
             });
     }
 
-    processResponse(requestHandler, response) {
+    async processResponse(requestHandler, request, response) {
         switch (requestHandler.host) {
             case 'whatanime.ga':
-                axios.post(`${this.config.discordBaseURL}/channels/235118465071972352/messages`, {
+                let data = await this.formatWhatAnimeResponse(request, response);
+                axios.post(`${this.config.discordBaseURL}/channels/235118465071972352/messages`, data, {
                     headers: {
                         'Authorization': `Bot ${this.config.token}`,
                         'Content-Type': `application/json`
                     },
-                    data: {
-                        content: '```js\n' + inspect(response) + '```'
-                    }
                 })
                 .catch(err => {
                     console.log(err);
@@ -88,6 +86,54 @@ class Shoukaku {
                 });
                 break;
         }
+    }
+
+    async formatWhatAnimeResponse(request, response) {
+        const mention = (Date.now() - 7500) > request.processedAt ? `<@!${request.userID}> ` : '';
+        if (!response.data.RawDocsCount) {
+            return {
+                content: `${mention}Your image did not returned any results`
+            };
+        }
+        const parsePosition = (position) => {
+            position = Math.round(position);
+            let hours = `${Math.round(Math.floor(position) / 60 / 60)}`;
+            let minutes = `${Math.round(Math.floor(position) / 60 - (60 * parseInt(hours)))}`;
+            let seconds = `${Math.round(Math.floor(position) - (60 * (Math.floor(position / 60))))}`;
+            if (hours === '0') {
+                hours = '';
+            }
+            if (hours.length === 1) {
+                hours = '0' + hours;
+            }
+            if (minutes === '0') {
+                minutes = '00';
+            }
+            if (minutes.length === 1) {
+                minutes = '0' + minutes;
+            }
+            if (seconds === '0') {
+                seconds = '00';
+            }
+            if (seconds.length === 1) {
+                seconds = '0' + seconds;
+            }
+            return `${hours ? (hours + ':') : hours}${minutes}:${seconds}`;
+        };
+        const firstResult = response.data.docs[0];
+        const similarity = firstResult.similarity.toString();
+        let res = `${mention}\n`;
+        res += `**Similarity**: ${similarity.charAt(2) + similarity.charAt(3)}.${similarity.charAt(4) + similarity.charAt(5)}%\n`;
+        res += `**Anime**: ${firstResult.title_romaji}\n`;
+        res += `**Episode**: ${firstResult.episode}\n`;
+        res += `**Anilist page**: <https://anilist.co/anime/${firstResult.anilist_id}>\n`;
+        if (firstResult.mal_id) {
+            res += `**MyAnimeList page**: <https://myanimelist.net/anime/${firstResult.mal_id}>\n`;
+        }
+        res += `**Preview**: https://whatanime.ga/thumbnail.php?anilist_id=${firstResult.anilist_id}&file=${encodeURIComponent(firstResult.filename)}&t=${firstResult.at}&token=${firstResult.tokenthumb}`;
+        return {
+            content: res
+        };
     }
 }
 
