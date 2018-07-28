@@ -95,6 +95,7 @@ class Shoukaku {
                 content: `${mention}Your image did not returned any results`
             };
         }
+        //eslint-disable-next-line no-unused-vars
         const parsePosition = (position) => {
             position = Math.round(position);
             let hours = `${Math.round(Math.floor(position) / 60 / 60)}`;
