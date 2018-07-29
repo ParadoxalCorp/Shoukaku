@@ -140,9 +140,8 @@ class Shoukaku {
             return `${hours ? (hours + ':') : hours}${minutes}:${seconds}`;
         };
         const firstResult = response.data.docs[0];
-        const similarity = firstResult.similarity.toString();
         let res = `${mention}\n`;
-        res += `**Similarity**: ${similarity.charAt(2) + similarity.charAt(3)}.${similarity.charAt(4) + similarity.charAt(5)}%\n`;
+        res += `**Similarity**: ${(firstResult.similarity * 100).toFixed(2)}%\n`;
         res += `**Anime**: ${firstResult.title_romaji}\n`;
         res += `**Episode**: ${firstResult.episode}\n`;
         res += `**Anilist page**: <https://anilist.co/anime/${firstResult.anilist_id}>\n`;
