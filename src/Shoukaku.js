@@ -55,7 +55,7 @@ class Shoukaku {
     onRequest(request, h) {
         const requestHandler = this.requestHandlers.get(request.payload.service);
         this.processRequest(requestHandler, request.payload);
-        return h.response(`{"queued":true, estimatedTime: ${this.estimateRequestTime(requestHandler)}}`).code(200).header('Content-Type', 'application/json');
+        return h.response(JSON.stringify({queued:true, estimatedTime: this.estimateRequestTime(requestHandler)})).code(200).header('Content-Type', 'application/json');
     }
 
     processRequest(requestHandler, request) {
@@ -107,7 +107,7 @@ class Shoukaku {
     }
 
     formatWhatAnimeResponse(request, response) {
-        const mention = (Date.now() - 7500) > request.processedAt ? `<@!${request.userID}> ` : '';
+        const mention = (Date.now() - 7500) > request.processedAt && !request.dm ? `<@!${request.userID}> ` : '';
         if (!response.data.RawDocsCount) {
             return {
                 content: `${mention}Your image did not returned any results`
@@ -149,7 +149,9 @@ class Shoukaku {
         if (firstResult.mal_id) {
             res += `**MyAnimeList page**: <https://myanimelist.net/anime/${firstResult.mal_id}>\n`;
         }
-        res += `**Preview**: https://whatanime.ga/thumbnail.php?anilist_id=${firstResult.anilist_id}&file=${encodeURIComponent(firstResult.filename)}&t=${firstResult.at}&token=${firstResult.tokenthumb}`;
+        if (!firstResult.is_adult || request.nsfw) {
+            res += `**Preview**: https://whatanime.ga/thumbnail.php?anilist_id=${firstResult.anilist_id}&file=${encodeURIComponent(firstResult.filename)}&t=${firstResult.at}&token=${firstResult.tokenthumb}`;
+        }
         return {
             content: res
         };
