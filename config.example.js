@@ -1,7 +1,6 @@
 module.exports = {
     address: 'localhost',
     port: 9850,
-    token: '',
     discordBaseURL: 'https://discordapp.com/api',
     services: [{
         host: 'whatanime.ga',

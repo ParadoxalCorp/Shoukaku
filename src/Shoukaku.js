@@ -70,7 +70,7 @@ class Shoukaku {
                 const mention = (Date.now() - 7500) > request.processedAt ? `<@!${request.userID}> ` : '';
                 axios.post(`${this.config.discordBaseURL}/channels/${request.channelID}/messages`, { content: mention + error }, {
                     headers: {
-                        'Authorization': `Bot ${this.config.token}`,
+                        'Authorization': `Bot ${request.botToken}`,
                         'Content-Type': `application/json`
                     },
                 });
@@ -93,7 +93,7 @@ class Shoukaku {
                 let data = this.formatWhatAnimeResponse(request, response);
                 axios.post(`${this.config.discordBaseURL}/channels/${request.channelID}/messages`, data, {
                     headers: {
-                        'Authorization': `Bot ${this.config.token}`,
+                        'Authorization': `Bot ${request.botToken}`,
                         'Content-Type': `application/json`
                     },
                 })
