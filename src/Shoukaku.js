@@ -5,6 +5,7 @@ const RequestHandler = require('./RequestHandler');
 const Hapi = require('hapi');
 const { inspect } = require('util');
 const axios = require('axios');
+const WhatAnimeHandler = require('./WhatAnimeHandler');
 
 class Shoukaku {
     constructor(config) {
@@ -90,70 +91,9 @@ class Shoukaku {
     async processResponse(requestHandler, request, response) {
         switch (requestHandler.host) {
             case 'whatanime.ga':
-                let data = this.formatWhatAnimeResponse(request, response);
-                axios.post(`${this.config.discordBaseURL}/channels/${request.channelID}/messages`, data, {
-                    headers: {
-                        'Authorization': `Bot ${request.botToken}`,
-                        'Content-Type': `application/json`
-                    },
-                })
-                .catch(err => {
-                    console.log(err);
-                    //Identify error
-                    //Retry logic
-                });
+                WhatAnimeHandler.handleResponse(request, response);
                 break;
         }
-    }
-
-    formatWhatAnimeResponse(request, response) {
-        const mention = (Date.now() - 7500) > request.processedAt && !request.dm ? `<@!${request.userID}> ` : '';
-        if (!response.data.RawDocsCount) {
-            return {
-                content: `${mention}Your image did not returned any results`
-            };
-        }
-        //eslint-disable-next-line no-unused-vars
-        const parsePosition = (position) => {
-            position = Math.round(position);
-            let hours = `${Math.round(Math.floor(position) / 60 / 60)}`;
-            let minutes = `${Math.round(Math.floor(position) / 60 - (60 * parseInt(hours)))}`;
-            let seconds = `${Math.round(Math.floor(position) - (60 * (Math.floor(position / 60))))}`;
-            if (hours === '0') {
-                hours = '';
-            }
-            if (hours.length === 1) {
-                hours = '0' + hours;
-            }
-            if (minutes === '0') {
-                minutes = '00';
-            }
-            if (minutes.length === 1) {
-                minutes = '0' + minutes;
-            }
-            if (seconds === '0') {
-                seconds = '00';
-            }
-            if (seconds.length === 1) {
-                seconds = '0' + seconds;
-            }
-            return `${hours ? (hours + ':') : hours}${minutes}:${seconds}`;
-        };
-        const firstResult = response.data.docs[0];
-        let res = `${mention}\n`;
-        res += `**Similarity**: ${(firstResult.similarity * 100).toFixed(2)}%\n`;
-        res += `**Anime**: ${firstResult.title_romaji}\n`;
-        res += `**Episode**: ${firstResult.episode}\n`;
-        res += `**Anilist page**: <https://anilist.co/anime/${firstResult.anilist_id}>\n`;
-        if (firstResult.mal_id) {
-            res += `**MyAnimeList page**: <https://myanimelist.net/anime/${firstResult.mal_id}>\n`;
-        }
-        if (!firstResult.is_adult || request.nsfw) {
-            res += `**Preview**: https://whatanime.ga/thumbnail.php?anilist_id=${firstResult.anilist_id}&file=${encodeURIComponent(firstResult.filename)}&t=${firstResult.at}&token=${firstResult.tokenthumb}`;
-        }
-        return {
-            content: res
-        };
     }
 }
 
