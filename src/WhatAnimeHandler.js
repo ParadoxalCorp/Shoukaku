@@ -9,9 +9,10 @@ class WhatAnimeHandler {
      * 
      * @param {object} request - The request sent by the bot 
      * @param {*} response - The response from whatanime.ga's servers
+     * @param {*} Shoukaku - Shoukaku
      * @returns {Promise<void>} Nothing here but us chickens
      */
-    static async handleResponse(request, response) {
+    static async handleResponse(request, response, Shoukaku) {
         const mention = (Date.now() - 7500) > request.processedAt && !request.dm ? `<@!${request.userID}> ` : '';
         if (!response.data.RawDocsCount) {
             return {
@@ -32,21 +33,20 @@ class WhatAnimeHandler {
             if (preview) {
                 res += `**Preview**: `;
                 res = this.buildMultipartForm(preview, {content: res});
-                axios.post(`${config.discordBaseURL}/channels/${request.channelID}/messages`, res, {
+                return axios.post(`${config.discordBaseURL}/channels/${request.channelID}/messages`, res, {
                     headers: {
                         'Authorization': `Bot ${request.botToken}`,
                         'Content-Type': `multipart/form-data; boundary=${res._boundary}`,
                     }
-                }).catch(err => {
-                    console.log(err);
-                    //Identify error
-                    //Retry logic
-                });
+                }).catch(this.identifyAndHandleError.bind(this, Shoukaku));
             }
         }
-        return {
-            content: res
-        };
+        return axios.post(`${config.discordBaseURL}/channels/${request.channelID}/messages`, {content: res}, {
+            headers: {
+                'Authorization': `Bot ${request.botToken}`,
+                'Content-Type': `application/json`,
+            }
+        }).catch(this.identifyAndHandleError.bind(this, Shoukaku));
     }
 
     static parsePosition(position) {
@@ -93,6 +93,16 @@ class WhatAnimeHandler {
             data.append("payload_json", JSON.stringify(body));
         }
         return data;
+    }
+
+    static identifyAndHandleError(Shoukaku, err) {
+        if (err.response.data && err.response.data.code) {
+            const knownError = Shoukaku.discordErrorCodes[err.response.data.code];
+            if (knownError && knownError.abort) {
+                return;
+            }
+        }
+        Shoukaku.Sentry.captureException(err);
     }
 }
 

@@ -2,6 +2,8 @@ module.exports = {
     address: 'localhost',
     port: 9850,
     discordBaseURL: 'https://discordapp.com/api',
+    sentryDSN: '',
+    environment: 'production',
     services: [{
         host: 'whatanime.ga',
         baseURL: 'https://whatanime.ga/api',
@@ -15,6 +17,6 @@ module.exports = {
         },
         errorCodes: {
             413: 'Your image was over 1MB, and whatanime.ga can\'t process images over 1MB'
-        }
+        },
     }]
 };

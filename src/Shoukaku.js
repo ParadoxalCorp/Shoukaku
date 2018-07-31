@@ -8,7 +8,7 @@ const axios = require('axios');
 const WhatAnimeHandler = require('./WhatAnimeHandler');
 
 class Shoukaku {
-    constructor(config) {
+    constructor(config, Sentry) {
         this.requestHandlers = new Collection();
         this.server = Hapi.server({
             address: config.address,
@@ -24,7 +24,19 @@ class Shoukaku {
                 }
             },
         });
+        this.Sentry = Sentry;
         this.config = config;
+        this.discordErrorCodes = {
+            50013: {
+                abort: true
+            },
+            50007: {
+                abort: true
+            },
+            50001: {
+                abort: true
+            }
+        };
         for (const service of config.services) {
             this.requestHandlers.set(service.host, new RequestHandler(service));
         }
@@ -84,14 +96,14 @@ class Shoukaku {
         } else if (requestHandler.errorCodes[err.response.status]) {
             return `:x: ${requestHandler.errorCodes[err.response.status]}`;
         }
-        console.log(err);
+        this.Sentry.captureException(err);
         return `:x: An error occurred`;
     }
 
     async processResponse(requestHandler, request, response) {
         switch (requestHandler.host) {
             case 'whatanime.ga':
-                WhatAnimeHandler.handleResponse(request, response);
+                WhatAnimeHandler.handleResponse(request, response, this).catch(this.Sentry.captureException);
                 break;
         }
     }
