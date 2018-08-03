@@ -23,7 +23,9 @@ class WhatAnimeHandler {
         let res = `${mention}\n`;
         res += `**Similarity**: ${(firstResult.similarity * 100).toFixed(2)}%\n`;
         res += `**Anime**: ${firstResult.title_romaji}\n`;
-        res += `**Episode**: ${firstResult.episode}\n`;
+        if (firstResult.episode) {
+            res += `**Episode**: ${firstResult.episode}\n`;
+        }
         res += `**Anilist page**: <https://anilist.co/anime/${firstResult.anilist_id}>\n`;
         if (firstResult.mal_id) {
             res += `**MyAnimeList page**: <https://myanimelist.net/anime/${firstResult.mal_id}>\n`;
