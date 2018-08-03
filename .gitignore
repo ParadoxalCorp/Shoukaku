@@ -1,0 +1,9 @@
+node_modules
+/config.js
+/package-lock.json
+.vscode
+testimage\.jpg
+
+test\.js
+
+testimage\.png

@@ -1,0 +1,31 @@
+{
+    "name": "shoukaku",
+    "version": "1.0.0",
+    "description": "A request handler server for Felix",
+    "main": "index.js",
+    "author": "ParadoxOrigins",
+    "contributors": [
+        {
+            "name": "Niputi"
+        },
+        {
+            "name": "Otaku17"
+        }
+    ],
+    "repository": "github:ParadoxalCorp/Shoukaku",
+    "license": "GPL-3.0",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "axios": "^0.18.0",
+        "npm": "^6.0.0",
+        "hapi": "^17.5.2",
+        "form-data": "^2.3.2",
+        "@sentry/node": "4.0.0-beta.11"
+    },
+    "devDependencies": {
+        "@types/node": "^10.0.0",
+        "eslint": "^5.0.0"
+    }
+}
