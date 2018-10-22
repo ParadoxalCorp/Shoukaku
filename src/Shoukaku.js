@@ -92,7 +92,7 @@ class Shoukaku {
 
     identifyError(requestHandler, err) {
         if (err.response.status >= 500) {
-            return `:x: whatanime.ga's servers seems to be down at the moment, maybe try again later?`;
+            return `:x: trace.moe's servers seems to be down at the moment, maybe try again later?`;
         } else if (requestHandler.errorCodes[err.response.status]) {
             return `:x: ${requestHandler.errorCodes[err.response.status]}`;
         }
@@ -102,7 +102,7 @@ class Shoukaku {
 
     async processResponse(requestHandler, request, response) {
         switch (requestHandler.host) {
-            case 'whatanime.ga':
+            case 'trace.moe':
                 WhatAnimeHandler.handleResponse(request, response, this).catch(this.Sentry.captureException);
                 break;
         }

@@ -5,8 +5,8 @@ module.exports = {
     sentryDSN: '',
     environment: 'production',
     services: [{
-        host: 'whatanime.ga',
-        baseURL: 'https://whatanime.ga/api',
+        host: 'trace.moe',
+        baseURL: 'https://trace.moe/api',
         burst: true,
         requestsPerMinute: 10,
         defaultParams: {
@@ -16,7 +16,7 @@ module.exports = {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         errorCodes: {
-            413: 'Your image was over 1MB, and whatanime.ga can\'t process images over 1MB'
+            413: 'Your image was over 1MB, and trace.moe can\'t process images over 1MB'
         },
     }]
 };

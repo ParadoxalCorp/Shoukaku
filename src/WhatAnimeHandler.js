@@ -78,7 +78,7 @@ class WhatAnimeHandler {
     }
 
     static downloadPreview(firstResult) {
-        return axios.get(`https://whatanime.ga/thumbnail.php?anilist_id=${firstResult.anilist_id}&file=${encodeURIComponent(firstResult.filename)}&t=${firstResult.at}&token=${firstResult.tokenthumb}`, {
+        return axios.get(`https://trace.moe/thumbnail.php?anilist_id=${firstResult.anilist_id}&file=${encodeURIComponent(firstResult.filename)}&t=${firstResult.at}&token=${firstResult.tokenthumb}`, {
             responseType: 'arraybuffer'
         })
         .then(res => res.data)
